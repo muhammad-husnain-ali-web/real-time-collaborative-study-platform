@@ -106,3 +106,20 @@ export const resetPassword = async (userData: ResetPassword) => {
     throw error;
   }
 };
+
+export async function userFound() {
+    let r = await fetch(`${API_URL}/auth/me`, {
+        credentials: "include"
+    })
+    let res = await r.json();
+    return res
+}
+
+export async function logout() {
+    let r = await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include"
+    });
+    let res = await r.json();
+    return res
+}

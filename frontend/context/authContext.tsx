@@ -2,32 +2,16 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import AuthContext from './useContext'
-// import { userFound } from '@/lib/services'
+import { userFound } from '@/lib/services'
 import { AuthUserState, ContextProviderProps } from '@/lib/types'
-
-// type User = {
-//   name: string
-//   email: string
-// }
-
-// type AuthUser = {
-//   auth: boolean
-//   user: User
-// }
-
-// type ContextProviderProps = {
-//   children: React.ReactNode
-// }
 
 const AuthProvider = ({ children }: ContextProviderProps) => {
   const [user, setUser] = useState<AuthUserState | null>(null)
 
   async function getUser() {
     try {
-    //   const res = await userFound();
-    // setUser({ auth: res.auth, user: res.user });
-    setUser({ auth: true, user: { _id: 1, name: "John Doe", role: "user", image: null, twofa: false } });
-    console.log("User fetched:", user)
+      const res = await userFound();
+    setUser({ auth: res.auth, user: res.user });
     } catch (err) {
       console.error("Error fetching user:", err)
       setUser(null)

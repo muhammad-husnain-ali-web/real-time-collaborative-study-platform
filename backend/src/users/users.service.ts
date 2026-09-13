@@ -39,6 +39,11 @@ export class UsersService {
         return user
     }
 
+    async findUserById(id: number){
+        const user = await this.usersRepository.findOneBy({id: id})
+        return user
+    }
+
     async verifyUser(email: string, isVerified: boolean){
         if(isVerified) {
             return null

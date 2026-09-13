@@ -207,6 +207,30 @@ export class AuthService {
     return { success: true, message: "Password changed successfully, you can login" }
   }
 
+  async me(request: any) {
+    const payload = await this.verifyToken(request.cookies.token)
+
+    if (payload === null) {
+      throw new UnauthorizedException({ success: false, auth: false, user: null });
+    }
+    const user = await this.usersService.findUserById(payload.id)
+
+    return { success: true, auth: true, user: { _id: payload.id, name: user?.name, role: payload.role, image: (user?.avatar || null), twofa: user?.twoFactorEnabled } }
+  }
+
+  async logout(response: any) {
+    console.log("run")
+    response.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      path: "/",
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return { success: true, message: "Logout successfully" }
+  }
+
 
 private async setCookiees(user: any, response: any) {
     const payload = { id: user?.id, name: user?.name, role: user?.role };

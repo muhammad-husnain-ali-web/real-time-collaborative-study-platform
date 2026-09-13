@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
@@ -46,6 +46,17 @@ export class AuthController {
   resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
   }
+
+    @Get('/me')
+  me(@Req() request: Request) {
+    return this.authService.me(request);
+  }
+
+  @Post('/logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    return this.authService.logout(response);
+  }
+
 
   @Get()
   findAll() {
