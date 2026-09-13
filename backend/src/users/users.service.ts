@@ -34,6 +34,11 @@ export class UsersService {
         return user
     }
 
+    async resetUserPassword(email: string, password: string){
+        const user = await this.usersRepository.update({email: email}, {password: password})
+        return user
+    }
+
     async verifyUser(email: string, isVerified: boolean){
         if(isVerified) {
             return null

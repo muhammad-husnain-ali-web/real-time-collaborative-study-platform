@@ -6,6 +6,7 @@ import { loginUserDto } from './dto/user-login.dto';
 import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
 import { VerifyOtpAuthDto } from './dto/verifyOtp-auth.dto';
 import { resendOtpAuthDto } from './dto/resendotp-auth.dto';
+import { ResetPasswordDto } from './dto/resetpassword-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +40,11 @@ export class AuthController {
   @Post('/resend-otp')
   resendOtp( @Body() resendOtpDto: resendOtpAuthDto) {
     return this.authService.resendOtp(resendOtpDto);
+  }
+
+  @Post('/reset-password')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @Get()

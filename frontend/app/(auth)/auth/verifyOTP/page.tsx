@@ -80,7 +80,7 @@ const VerifyOtpPage = () => {
       router.push(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard`)
     }
     if (res.purpose === "forgot-password") {
-      router.push(`${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?email=${res.token}`);
+      router.push(`${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${res.token}`);
     }
 
   }

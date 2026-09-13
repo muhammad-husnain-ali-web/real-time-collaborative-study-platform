@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
 import { VerifyOtpAuthDto } from './dto/verifyOtp-auth.dto';
 import { resendOtpAuthDto } from './dto/resendotp-auth.dto';
+import { ResetPasswordDto } from './dto/resetpassword-auth.dto';
 
 
 @Injectable()
@@ -181,6 +182,31 @@ export class AuthService {
     return { success: true, message: "OTP resent successfully", email }
 
   }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    let payload = undefined as any
+    try {
+      payload = await this.jwtService.verifyAsync(resetPasswordDto.token, { secret: process.env.JWT_SECERET });
+    } catch (e) {
+      throw new UnauthorizedException({ success: false, message: "Invalid credentials" });
+    }
+
+    const user = await this.usersService.findUser(payload.email)
+    if (!user) {
+      throw new UnauthorizedException({ success: false, message: "User is not found" })
+    }
+    if (resetPasswordDto.password != resetPasswordDto.confirmPassword) {
+      throw new BadRequestException({ success: false, message: "Passwords do not match" });
+    }
+
+    const saltOrRounds = 10;
+    const hash = await bcrypt.hash(resetPasswordDto.password, saltOrRounds);
+
+    await this.usersService.resetUserPassword(payload.email, hash)
+
+    return { success: true, message: "Password changed successfully, you can login" }
+  }
+
 
 private async setCookiees(user: any, response: any) {
     const payload = { id: user?.id, name: user?.name, role: user?.role };
