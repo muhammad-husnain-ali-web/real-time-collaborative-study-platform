@@ -26,7 +26,7 @@ const AuthProvider = ({ children }: ContextProviderProps) => {
     try {
     //   const res = await userFound();
     // setUser({ auth: res.auth, user: res.user });
-    setUser({ auth: true, user: { name: 'John Doe', email: 'john.doe@example.com' } })
+    setUser({ auth: true, user: { _id: 1, name: "John Doe", role: "user", image: null, twofa: false } });
     console.log("User fetched:", user)
     } catch (err) {
       console.error("Error fetching user:", err)

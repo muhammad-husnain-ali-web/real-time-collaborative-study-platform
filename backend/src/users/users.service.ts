@@ -28,6 +28,11 @@ export class UsersService {
             throw error
         }
     }
+    
+    async findUser(email: string){
+        const user = await this.usersRepository.findOneBy({email: email})
+        return user
+    }
 
 
   create(createUserDto: CreateUserDto) {

@@ -1,4 +1,17 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateOtpDto } from './create-otp.dto';
+import { IsDate, IsEnum, IsString } from "class-validator";
+import { Purpose } from "../enum/purpose.enum";
 
-export class UpdateOtpDto extends PartialType(CreateOtpDto) {}
+export class UpdateOtpDto {
+    @IsString()
+    otp!: string
+
+    @IsDate()
+    otpExpiry!: Date;
+
+    @IsDate()
+    resendAllowedAfter!: Date;
+
+    @IsEnum(Purpose)
+    purpose!: Purpose
+
+}

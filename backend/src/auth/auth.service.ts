@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from 'src/users/users.service';
@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 import { Purpose } from 'src/otps/enum/purpose.enum';
 import { OtpsService } from 'src/otps/otps.service';
 import { MailsService } from 'src/mails/mails.service';
+import { loginUserDto } from './dto/user-login.dto';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,35 @@ export class AuthService {
     return { status: 200, success: true, message: 'User register successfully', email: createAuthDto.email };
   }
 
+  async login(loginUserDto: loginUserDto, response: any){
+    const user = await this.usersService.findUser(loginUserDto.email)
+
+    if (!user) {
+      throw new UnauthorizedException({ success: false, message: "Invalid credentials" })
+    }
+
+    const isMatch = await bcrypt.compare(loginUserDto.password, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException({ success: false, message: "Invalid credentials" });
+    }
+
+    // if (!user.twoFactorEnabled) {
+    //   await this.setCookiees(user, respone)
+    //   return { success: true, twofa: false, message: "User found successfully", user: { _id: user.id, name: user.name, role: user.role, image: (user.profilePic || null), twofa: user.twoFactorEnabled }}
+    // }
+
+    
+    const saltOrRounds = 10;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashOTP = await bcrypt.hash(otp, saltOrRounds)
+    const OTP = { otp: hashOTP, otpExpiry: new Date(Date.now() + 5 * 60 * 1000), resendAllowedAfter: new Date(Date.now() + 60 * 1000), purpose: Purpose.Login }
+
+    await this.otpsService.UpdateOtp(user.email, OTP)
+    await this.mailsService.sendmail(Purpose.Login, user.name, user.email, otp)
+
+    return { success: true, twofa: true, message: 'User found successfully', email: loginUserDto.email };
+
+  }
 
 
   create(createAuthDto: CreateAuthDto) {

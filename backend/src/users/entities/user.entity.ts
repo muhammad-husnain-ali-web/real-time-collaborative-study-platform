@@ -39,6 +39,9 @@ export class User {
     @Column({ type: 'boolean', default: false })
     isVerified!: boolean;
 
+    @Column({ type: 'boolean', default: true })
+    twoFactorEnabled!: boolean;
+
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
 

@@ -18,6 +18,11 @@ async CreateOtp(createOtpDto: CreateOtpDto){
             return await this.otpsRepository.save(newOtp)
     }
 
+    async UpdateOtp(email: string, updateOtpDto: UpdateOtpDto){
+        const otp = await this.otpsRepository.update({ email: email }, updateOtpDto)
+        return otp
+    }
+
   create(createOtpDto: CreateOtpDto) {
     return 'This action adds a new otp';
   }

@@ -3,9 +3,17 @@ export type UserState = {
   email: string
 }
 
+type UserContextType = {
+  _id: number, 
+  name: string,
+  role: string, 
+  image: string | null, 
+  twofa: boolean 
+}
+
 export type AuthUserState = {
   auth: boolean
-  user: UserState
+  user: UserContextType | null
 }
 
 export type ContextProviderProps = {
@@ -18,3 +26,8 @@ export type RegisterUser = {
     password: string
     confirmPassword: string
 }     
+
+export type LoginUser = {
+    email: string
+    password: string
+}

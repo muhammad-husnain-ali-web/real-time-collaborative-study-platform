@@ -137,7 +137,7 @@ const Register = () => {
               name="password"
               required
               className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              placeholder="At least 6 characters"
+              placeholder="At least 8 characters"
             />
             <img
             onClick={() => setShowPwd(!showPwd)}
@@ -177,7 +177,7 @@ const Register = () => {
 
         <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Already have an account?{' '}
-          <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`} className="text-blue-600 hover:text-blue-500 font-medium">
+          <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/auth/login`} className="text-blue-600 hover:text-blue-500 font-medium">
             Sign In
           </Link>
         </p>
