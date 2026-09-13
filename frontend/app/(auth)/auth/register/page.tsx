@@ -5,11 +5,12 @@ import React from 'react'
 import {useState} from 'react'
 import { userRegister } from '@/lib/services'
 import { useRouter } from 'next/navigation';
-import { RegisterUser } from '@/lib/types'
+import { FormUser, RegisterRole} from '@/lib/types'
 
 const Register = () => {
     const router = useRouter();
-    const [form, setForm] = useState<RegisterUser>({
+    const [role, setRole] = useState<RegisterRole>(RegisterRole.Student)
+    const [form, setForm] = useState<FormUser>({
     name: "",
     email: "",
     password: "",
@@ -38,10 +39,8 @@ const Register = () => {
       setIsloading(false);
       return;
     }
-
     // Proceed with form submission logic here (e.g., API call)
-    const res = await userRegister(form);
-    console.log("Register response:", res);
+    const res = await userRegister({...form, role});
     setIsloading(false);
     if(res.statusCode=== 400){
       setmessage(res.message[0])
@@ -51,7 +50,7 @@ const Register = () => {
     }
 
     if (res.success) {
-        router.push(`${process.env.NEXT_PUBLIC_APP_URL}/auth//verifyOTP?email=${res.email}`);
+        router.push(`${process.env.NEXT_PUBLIC_APP_URL}/auth/verifyOTP?email=${res.email}`);
     }
 }
 
@@ -101,13 +100,13 @@ const Register = () => {
           </div>
 
           <div>
-            {/* <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">I am a</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">I am a</label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setRole('STUDENT')}
+                onClick={() => setRole(RegisterRole.Student)}
                 className={`py-2.5 rounded-lg border text-sm font-medium transition-colors ${
-                  role === 'STUDENT'
+                  role === RegisterRole.Student
                     ? 'bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/50 dark:border-blue-500 dark:text-blue-400'
                     : 'border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
@@ -116,16 +115,16 @@ const Register = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setRole('TEACHER')}
+                onClick={() => setRole(RegisterRole.Teacher)}
                 className={`py-2.5 rounded-lg border text-sm font-medium transition-colors ${
-                  role === 'TEACHER'
+                  role === RegisterRole.Teacher
                     ? 'bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/50 dark:border-blue-500 dark:text-blue-400'
                     : 'border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
                 Teacher
               </button>
-            </div> */}
+            </div>
           </div>
 
           <div className='relative'>

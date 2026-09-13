@@ -1,4 +1,5 @@
-import { IsEmail, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { Role } from "src/users/enum/role.enum";
 
 export class CreateAuthDto {
     @IsString()
@@ -17,4 +18,9 @@ export class CreateAuthDto {
 
     @IsString()
     confirmPassword!: string
+
+    @IsEnum(Role, {
+    message: 'Role must be student, teacher, or admin',
+  })
+  role!: Role;
 }

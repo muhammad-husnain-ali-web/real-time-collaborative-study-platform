@@ -7,6 +7,7 @@ import { Purpose } from 'src/otps/enum/purpose.enum';
 import { OtpsService } from 'src/otps/otps.service';
 import { MailsService } from 'src/mails/mails.service';
 import { loginUserDto } from './dto/user-login.dto';
+import { Role } from 'src/users/enum/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,14 @@ export class AuthService {
     if(createAuthDto.password !== createAuthDto.confirmPassword) {
       throw new BadRequestException({ success: false, message: "Passwords do not match" });
     }
+
+    if(createAuthDto.role === Role.Admin){
+      throw new BadRequestException({
+      success: false,
+      message: 'Admin registration is not allowed',
+    })
+    }
+
     const saltOrRounds = 10;
 
     const hash = await bcrypt.hash(createAuthDto.password, saltOrRounds);
@@ -29,7 +38,7 @@ export class AuthService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashOTP = await bcrypt.hash(otp, saltOrRounds)
 
-    const user = { name: createAuthDto.name, email: createAuthDto.email, password: hash }
+    const user = { name: createAuthDto.name, email: createAuthDto.email, password: hash, role: createAuthDto.role }
     const OTP = { email: createAuthDto.email, otp: hashOTP, otpExpiry: new Date(Date.now() + 5 * 60 * 1000), resendAllowedAfter: new Date(Date.now() + 60 * 1000), purpose: Purpose.Register }
 
     await this.usersService.signUp(user)

@@ -40,7 +40,7 @@ export default function LoginPage() {
         }
 
         if (res.success && res.twofa) {
-          router.push(`${process.env.NEXT_PUBLIC_APP_URL}/auth/twofa?email=${res.email}`);
+          router.push(`${process.env.NEXT_PUBLIC_APP_URL}/auth/verifyOTP?email=${res.email}`);
         }
 
         if (res.success && !res.twofa) {

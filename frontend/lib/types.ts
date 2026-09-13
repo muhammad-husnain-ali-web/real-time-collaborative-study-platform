@@ -20,14 +20,34 @@ export type ContextProviderProps = {
   children: React.ReactNode
 }
 
-export type RegisterUser = {
+
+export type FormUser = {
     name: string
     email: string
     password: string
     confirmPassword: string
-}     
+}   
+
+export enum RegisterRole {
+  Student = 'student',
+  Teacher = 'teacher',
+}
+
+export type RegisterUser = {
+    name: string
+    email: string
+    role: RegisterRole
+    password: string
+    confirmPassword: string
+}   
 
 export type LoginUser = {
     email: string
     password: string
+}
+
+export enum Role {
+  Student = 'student',
+  Teacher = 'teacher',
+  Admin = 'admin'
 }
