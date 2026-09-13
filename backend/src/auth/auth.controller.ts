@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { loginUserDto } from './dto/user-login.dto';
+import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +17,11 @@ export class AuthController {
    @Post('/login')
   login(@Res({ passthrough: true }) response: Response, @Body() loginUserDto: loginUserDto) {
     return this.authService.login(loginUserDto, response);
+  }
+
+  @Post('/forgot-password')
+  forgotPassword( @Body() forgotPasswordDto: forgotPasswordAuthDto) {
+    return this.authService.forgotPassword(forgotPasswordDto);
   }
 
   @Post()

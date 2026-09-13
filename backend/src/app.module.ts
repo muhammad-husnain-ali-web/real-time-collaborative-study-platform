@@ -10,10 +10,16 @@ import { OtpsModule } from './otps/otps.module';
 import { MailsService } from './mails/mails.service';
 import { MailsModule } from './mails/mails.module';
 import { OTP } from './otps/entities/otp.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECERET,
+      signOptions: { expiresIn: '2d' },
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,

@@ -46,6 +46,11 @@ export type LoginUser = {
     password: string
 }
 
+export type ForgotPassword = {
+    email: string
+}
+
+
 export enum Role {
   Student = 'student',
   Teacher = 'teacher',

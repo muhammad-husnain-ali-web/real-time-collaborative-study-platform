@@ -8,6 +8,9 @@ import { OtpsService } from 'src/otps/otps.service';
 import { MailsService } from 'src/mails/mails.service';
 import { loginUserDto } from './dto/user-login.dto';
 import { Role } from 'src/users/enum/role.enum';
+import { JwtService } from '@nestjs/jwt';
+import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
+
 
 @Injectable()
 export class AuthService {
@@ -15,7 +18,8 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly otpsService: OtpsService,
-    private mailsService: MailsService
+    private readonly mailsService: MailsService,
+    private readonly jwtService: JwtService
   ){}
 
 
@@ -46,7 +50,7 @@ export class AuthService {
     await this.mailsService.sendmail(Purpose.Register, user.name, user.email, otp)
 
     return { status: 200, success: true, message: 'User register successfully', email: createAuthDto.email };
-  }
+  };
 
   async login(loginUserDto: loginUserDto, response: any){
     const user = await this.usersService.findUser(loginUserDto.email)
@@ -76,6 +80,39 @@ export class AuthService {
 
     return { success: true, twofa: true, message: 'User found successfully', email: loginUserDto.email };
 
+  };
+
+  async forgotPassword(forgotPasswordDto: forgotPasswordAuthDto) {
+    const { email } = forgotPasswordDto
+
+    const user = await this.usersService.findUser(email)
+
+    if (!user) {
+      throw new UnauthorizedException({ success: false, message: "User not found" })
+    }
+
+    const saltOrRounds = 10;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashOTP = await bcrypt.hash(otp, saltOrRounds)
+    const OTP = { otp: hashOTP, otpExpiry: new Date(Date.now() + 5 * 60 * 1000), resendAllowedAfter: new Date(Date.now() + 60 * 1000), purpose: Purpose.ForgotPassword }
+
+    await this.otpsService.UpdateOtp(user.email, OTP)
+    console.log("sending mail forgot password")
+    await this.mailsService.sendmail(Purpose.ForgotPassword, user.name, user.email, otp)
+
+    return { success: true, message: "OTP send to your email. Please verify", email }
+  };
+
+    private async setCookiees(user: any, response: any) {
+    const payload = { id: user?.id, name: user?.name, role: user?.role };
+    const token = await this.jwtService.signAsync(payload);
+    response.cookie('token', token, {
+      httpOnly: true,
+      secure: false,
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    });
   }
 
 

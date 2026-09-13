@@ -104,6 +104,8 @@ export default function LoginPage() {
             alt="toggle"
           />
           </div>
+          <div className='my-4 flex justify-end items-center'> <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/auth/forgot-password`} className='text-blue-600 hover:text-blue-500 font-medium underline'>Forgot Password</Link></div>
+        
 
           <button
             type="submit"
