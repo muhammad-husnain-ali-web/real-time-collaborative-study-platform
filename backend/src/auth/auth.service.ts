@@ -13,6 +13,8 @@ import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
 import { VerifyOtpAuthDto } from './dto/verifyOtp-auth.dto';
 import { resendOtpAuthDto } from './dto/resendotp-auth.dto';
 import { ResetPasswordDto } from './dto/resetpassword-auth.dto';
+import { NameChangeAuthDto } from './dto/namechange-auth.dto';
+import { UploadsService } from 'src/uploads/uploads.service';
 
 
 @Injectable()
@@ -22,6 +24,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly otpsService: OtpsService,
     private readonly mailsService: MailsService,
+    private readonly uploadsService: UploadsService,
     private readonly jwtService: JwtService
   ){}
 
@@ -67,10 +70,10 @@ export class AuthService {
       throw new UnauthorizedException({ success: false, message: "Invalid credentials" });
     }
 
-    // if (!user.twoFactorEnabled) {
-    //   await this.setCookiees(user, respone)
-    //   return { success: true, twofa: false, message: "User found successfully", user: { _id: user.id, name: user.name, role: user.role, image: (user.profilePic || null), twofa: user.twoFactorEnabled }}
-    // }
+    if (!user.twoFactorEnabled) {
+      await this.setCookiees(user, response)
+      return { success: true, twofa: false, message: "User found successfully", user: { _id: user.id, name: user.name, role: user.role, image: (user.avatar || null), twofa: user.twoFactorEnabled }}
+    }
 
     
     const saltOrRounds = 10;
@@ -231,6 +234,18 @@ export class AuthService {
     return { success: true, message: "Logout successfully" }
   }
 
+<<<<<<< HEAD
+=======
+  async twofa(request: any) {
+    await this.usersService.twofaEnabled(request.user.id)
+    return { success: true, message: "twofo is toggle" }
+  }
+
+  async nameChange(nameChangeDto: NameChangeAuthDto, request: any){
+    await this.usersService.nameChangeUser(request.user.id, nameChangeDto.name)
+    return { success: true, message: "Name change successfully", name: nameChangeDto.name }
+  }
+>>>>>>> ce09433 (feat: implement logout twofa api namechange api & uploadimage api)
 
 private async setCookiees(user: any, response: any) {
     const payload = { id: user?.id, name: user?.name, role: user?.role };
@@ -250,6 +265,17 @@ private async setCookiees(user: any, response: any) {
     } catch (e) {
       return null
     }
+  }
+
+  async imageUpload(file: Express.Multer.File, request: any){
+    const user = await this.usersService.findUserById(request.user.id)
+    if(user?.cloudinaryId){
+      await this.uploadsService.deleteImage(user.cloudinaryId)
+    }
+
+    const result = await this.uploadsService.uploadImage(file.path, request.user.id)
+    await this.usersService.imageSave(request.user.id, result)
+    return { success: true, message: "Profile picture updated", url: result.secure_url }
   }
 
   create(createAuthDto: CreateAuthDto) {

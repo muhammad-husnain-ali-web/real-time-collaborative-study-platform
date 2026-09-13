@@ -11,6 +11,7 @@ import { MailsService } from './mails/mails.service';
 import { MailsModule } from './mails/mails.module';
 import { OTP } from './otps/entities/otp.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { JwtModule } from '@nestjs/jwt';
     UsersModule,
     OtpsModule,
     MailsModule,
+    UploadsModule,
   ],
 
   controllers: [AppController],

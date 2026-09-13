@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req } from '@nestjs/common';
+=======
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+>>>>>>> ce09433 (feat: implement logout twofa api namechange api & uploadimage api)
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
@@ -7,6 +11,11 @@ import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
 import { VerifyOtpAuthDto } from './dto/verifyOtp-auth.dto';
 import { resendOtpAuthDto } from './dto/resendotp-auth.dto';
 import { ResetPasswordDto } from './dto/resetpassword-auth.dto';
+import { NameChangeAuthDto } from './dto/namechange-auth.dto';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path from 'path';
 
 @Controller('auth')
 export class AuthController {
@@ -57,6 +66,40 @@ export class AuthController {
     return this.authService.logout(response);
   }
 
+<<<<<<< HEAD
+=======
+  @UseGuards(AuthGuard)
+  @Post('/twofa')
+  twofa(@Req() request: Request) {
+    return this.authService.twofa(request)
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/nameChange')
+  nameChange(@Req() request: Request, @Body() nameChangeDto: NameChangeAuthDto) {
+    return this.authService.nameChange(nameChangeDto, request)
+  }
+
+   @UseGuards(AuthGuard)
+  @Post('/imageUpload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = path.extname(file.originalname);
+          cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+        },
+      }),
+    }),
+  )
+  imageUpload(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
+    return this.authService.imageUpload(file, req)
+  }
+
+>>>>>>> ce09433 (feat: implement logout twofa api namechange api & uploadimage api)
 
   @Get()
   findAll() {

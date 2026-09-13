@@ -44,16 +44,32 @@ export class UsersService {
         return user
     }
 
+<<<<<<< HEAD
+=======
+    async twofaEnabled(id: number){
+        const user = await this.findUserById(id)
+        await this.usersRepository.update({id: id}, {twoFactorEnabled : !user?.twoFactorEnabled})
+        return
+    }
+
+>>>>>>> ce09433 (feat: implement logout twofa api namechange api & uploadimage api)
     async verifyUser(email: string, isVerified: boolean){
         if(isVerified) {
             return null
         }
-        
         await this.usersRepository.update({email: email}, {isVerified : true})
-
         return { success: true, message: 'User verified successfully' };
     }
 
+    async nameChangeUser(id:number, name: string){
+        await this.usersRepository.update({id: id}, {name : name})
+        return
+    }
+
+    async imageSave(id: number ,result: any){
+        await this.usersRepository.update({id: id}, {avatar: result.secure_url, cloudinaryId: result.public_id})
+        return
+    }
 
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
