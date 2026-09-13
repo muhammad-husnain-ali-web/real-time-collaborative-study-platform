@@ -34,6 +34,16 @@ export class UsersService {
         return user
     }
 
+    async verifyUser(email: string, isVerified: boolean){
+        if(isVerified) {
+            return null
+        }
+        
+        await this.usersRepository.update({email: email}, {isVerified : true})
+
+        return { success: true, message: 'User verified successfully' };
+    }
+
 
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';

@@ -23,6 +23,17 @@ async CreateOtp(createOtpDto: CreateOtpDto){
         return otp
     }
 
+    async findOtp(email: string){
+        const otp = await this.otpsRepository.findOneBy( {email: email})
+        return otp
+    }
+
+    async otpNull(email: string){
+        const otpNull = {otp: null, resendAllowedAfter: null, otpExpiry: null} as any;
+        const otp = await this.otpsRepository.update( {email: email}, otpNull)
+        return otp
+    }
+
   create(createOtpDto: CreateOtpDto) {
     return 'This action adds a new otp';
   }

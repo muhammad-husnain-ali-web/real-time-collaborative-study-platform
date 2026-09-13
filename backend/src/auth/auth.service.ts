@@ -10,6 +10,8 @@ import { loginUserDto } from './dto/user-login.dto';
 import { Role } from 'src/users/enum/role.enum';
 import { JwtService } from '@nestjs/jwt';
 import { forgotPasswordAuthDto } from './dto/forgotpassword-auth.dto';
+import { VerifyOtpAuthDto } from './dto/verifyOtp-auth.dto';
+import { resendOtpAuthDto } from './dto/resendotp-auth.dto';
 
 
 @Injectable()
@@ -97,13 +99,90 @@ export class AuthService {
     const OTP = { otp: hashOTP, otpExpiry: new Date(Date.now() + 5 * 60 * 1000), resendAllowedAfter: new Date(Date.now() + 60 * 1000), purpose: Purpose.ForgotPassword }
 
     await this.otpsService.UpdateOtp(user.email, OTP)
-    console.log("sending mail forgot password")
     await this.mailsService.sendmail(Purpose.ForgotPassword, user.name, user.email, otp)
 
     return { success: true, message: "OTP send to your email. Please verify", email }
   };
 
-    private async setCookiees(user: any, response: any) {
+  async verifyOtp(verifyOtpDto: VerifyOtpAuthDto, respone: Response) {
+    const user = await this.usersService.findUser(verifyOtpDto.email)
+    if (!user) {
+      throw new UnauthorizedException({ success: false, message: "Invalid credentials" })
+    }
+
+    const userOtp = await this.otpsService.findOtp(user.email)
+    if (!userOtp) {
+      throw new UnauthorizedException({ success: false, message: "Invalid credentials" })
+    }
+    if (!userOtp.otp) {
+      throw new UnauthorizedException({ success: false, message: "Invalid otp" })
+    }
+    
+    const isExpired = userOtp.otpExpiry.getTime() < Date.now()
+    if (isExpired) {
+      throw new BadRequestException({ success: false, message: "Invalid Otp has expired" })
+    }
+    
+    const isMatch = await bcrypt.compare(verifyOtpDto.otp, userOtp.otp);
+    if (!isMatch) {
+      throw new BadRequestException({ success: false, message: "Invalid otp or email" })
+    }
+
+    if (userOtp.purpose === Purpose.Register) {
+      await this.usersService.verifyUser(user.email, user.isVerified)
+      await this.otpsService.otpNull(user.email)
+      await this.setCookiees(user, respone)
+      return { success: true, message: "Email verified successfully", purpose: 'register', user: { _id: user.id, name: user.name, role: user.role, image: (user.avatar || null), twofa: user.twoFactorEnabled } }
+    }
+    else if (userOtp.purpose === Purpose.Login) {
+      await this.usersService.verifyUser(user.email, user.isVerified)
+      await this.otpsService.otpNull(user.email)
+      await this.setCookiees(user, respone)
+      return { success: true, message: "Login successfully", purpose: 'login', user: { _id: user.id, name: user.name, role: user.role, image: (user.avatar || null), twofa: user.twoFactorEnabled } }
+    }
+    else if (userOtp.purpose === Purpose.ForgotPassword) {
+      await this.otpsService.otpNull(user.email)
+      const payload = { _id: user.id, email: user.email };
+      const tempToken = await this.jwtService.signAsync(payload, { expiresIn: '5m' });
+      return { success: true, message: "OTP verified, proceed to reset password", purpose: 'forgot-password', token: tempToken }
+    }
+
+  };
+
+  async resendOtp(resendOtpDto: resendOtpAuthDto) {
+    const { email } = resendOtpDto
+
+    const user = await this.usersService.findUser(email)
+    if (!user) {
+      throw new UnauthorizedException({ success: false, message: "User not found" })
+    }
+
+    const userOtp = await this.otpsService.findOtp(user.email)
+    if (!userOtp) {
+      throw new UnauthorizedException({ success: false, message: "User not found'" })
+    }
+    if (!userOtp.otp) {
+      throw new UnauthorizedException({ success: false, message: "User not found'" })
+    }
+    const resendAllowed = userOtp.resendAllowedAfter.getTime() > Date.now()
+    if (resendAllowed) {
+      throw new BadRequestException({ success: false, message: "Please wait before resending OTP" })
+    }
+
+    const saltOrRounds = 10;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashOTP = await bcrypt.hash(otp, saltOrRounds)
+
+    const OTP = { otp: hashOTP, otpExpiry: new Date(Date.now() + 5 * 60 * 1000), resendAllowedAfter: new Date(Date.now() + 60 * 1000), purpose: userOtp.purpose }
+
+    await this.otpsService.UpdateOtp(user.email, OTP)
+    await this.mailsService.sendmail(userOtp.purpose, user.name, user.email, otp)
+
+    return { success: true, message: "OTP resent successfully", email }
+
+  }
+
+private async setCookiees(user: any, response: any) {
     const payload = { id: user?.id, name: user?.name, role: user?.role };
     const token = await this.jwtService.signAsync(payload);
     response.cookie('token', token, {
@@ -115,6 +194,13 @@ export class AuthService {
     });
   }
 
+  private async verifyToken(token: any) {
+    try {
+      return await this.jwtService.verifyAsync(token, { secret: process.env.JWT_SECERET });
+    } catch (e) {
+      return null
+    }
+  }
 
   create(createAuthDto: CreateAuthDto) {
     return 'This action adds a new auth';

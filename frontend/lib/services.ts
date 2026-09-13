@@ -1,7 +1,6 @@
-import { LoginUser, RegisterUser, ForgotPassword } from "./types";
+import { LoginUser, RegisterUser, ForgotPassword, VerifyOtp, ResendOtp } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 
 
 export const userRegister = async (userData: RegisterUser) => {
@@ -29,6 +28,7 @@ export const userLogin = async (userData: LoginUser) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
+        credentials: "include"
     });
     const data = await response.json();
     return data;
@@ -54,3 +54,39 @@ export const forgotPassword = async (userData: ForgotPassword) => {
     throw error;
   }
 };
+
+export const verifyOtp = async (userData: VerifyOtp) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+        credentials: "include"
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    throw error;
+  }
+};
+
+export const resendOtp = async (userData: ResendOtp) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/resend-otp`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    throw error;
+  }
+};
+

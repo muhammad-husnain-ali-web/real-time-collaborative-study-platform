@@ -50,6 +50,14 @@ export type ForgotPassword = {
     email: string
 }
 
+export type VerifyOtp = {
+    email: string
+    otp: string
+  }
+
+  export type ResendOtp = {
+      email: string
+  }
 
 export enum Role {
   Student = 'student',
