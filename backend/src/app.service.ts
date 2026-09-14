@@ -7,6 +7,6 @@ export class AppService {
   }
 
   getTest(): any {
-    return {message: 'Hello World!'};
+    return {success: true, message: "You have access to this resource"};
   }
 }

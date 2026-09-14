@@ -6,6 +6,7 @@ import {useState} from 'react'
 import { userRegister } from '@/lib/services'
 import { useRouter } from 'next/navigation';
 import { FormUser, RegisterRole} from '@/lib/types'
+import PublicRoute from '@/publicRoute/PublieRoute'
 
 const Register = () => {
     const router = useRouter();
@@ -56,7 +57,8 @@ const Register = () => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+    <PublicRoute>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -182,6 +184,7 @@ const Register = () => {
         </p>
       </div>
     </div>
+    </PublicRoute>
   )
 }
 

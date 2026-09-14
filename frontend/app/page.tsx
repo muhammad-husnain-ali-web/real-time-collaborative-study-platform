@@ -1,8 +1,10 @@
+import PublicRoute from '@/publicRoute/PublieRoute';
 import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-950 dark:to-gray-900">
+    <PublicRoute>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-950 dark:to-gray-900">
       <div className="max-w-lg w-full mx-4 text-center">
         <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
           <span className="text-white font-bold text-2xl">SP</span>
@@ -29,5 +31,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </PublicRoute>
   );
 }

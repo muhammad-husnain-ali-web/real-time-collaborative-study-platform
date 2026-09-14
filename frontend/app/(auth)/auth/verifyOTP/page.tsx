@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { resendOtp, verifyOtp } from '@/lib/services'
 import { useContext } from "react";
 import AuthContext from '@/context/useContext';
+import PublicRoute from '@/publicRoute/PublieRoute'
 
 const VerifyOtpPage = () => {
   const router = useRouter()
@@ -86,7 +87,8 @@ const VerifyOtpPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <PublicRoute>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -156,6 +158,7 @@ const VerifyOtpPage = () => {
         </div>
       </div>
     </div>
+    </PublicRoute>
   )
 }
 

@@ -4,6 +4,7 @@ import { ForgotPassword } from '@/lib/types';
 import React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
+import PublicRoute from '@/publicRoute/PublieRoute';
 
 const ForgotPasswordPage = () => {
 
@@ -36,7 +37,8 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <PublicRoute>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -77,7 +79,8 @@ const ForgotPasswordPage = () => {
         </form>
       </div>
     </div>
-  )
+    </PublicRoute>  
+)
 }
 
 export default ForgotPasswordPage

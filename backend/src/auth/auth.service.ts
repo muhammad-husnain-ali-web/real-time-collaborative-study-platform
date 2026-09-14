@@ -234,8 +234,6 @@ export class AuthService {
     return { success: true, message: "Logout successfully" }
   }
 
-<<<<<<< HEAD
-=======
   async twofa(request: any) {
     await this.usersService.twofaEnabled(request.user.id)
     return { success: true, message: "twofo is toggle" }
@@ -245,7 +243,6 @@ export class AuthService {
     await this.usersService.nameChangeUser(request.user.id, nameChangeDto.name)
     return { success: true, message: "Name change successfully", name: nameChangeDto.name }
   }
->>>>>>> ce09433 (feat: implement logout twofa api namechange api & uploadimage api)
 
 private async setCookiees(user: any, response: any) {
     const payload = { id: user?.id, name: user?.name, role: user?.role };
