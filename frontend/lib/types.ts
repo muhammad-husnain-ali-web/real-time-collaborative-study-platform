@@ -75,3 +75,9 @@ export enum Role {
   Teacher = 'teacher',
   Admin = 'admin'
 }
+
+export type CourseData = {
+  title: string
+  code: string
+  description: string
+}

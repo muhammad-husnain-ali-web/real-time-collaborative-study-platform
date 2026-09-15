@@ -1,4 +1,4 @@
-import { LoginUser, RegisterUser, ForgotPassword, VerifyOtp, ResendOtp, ResetPassword } from "./types";
+import { LoginUser, RegisterUser, ForgotPassword, VerifyOtp, ResendOtp, ResetPassword, CourseData } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -120,6 +120,18 @@ export async function logout() {
         method: "POST",
         credentials: "include"
     });
+    let res = await r.json();
+    return res
+}
+
+
+
+export async function createCourse(course: CourseData) {
+    let r = await fetch(`${API_URL}/courses`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(course),
+        credentials: "include"
+    })
     let res = await r.json();
     return res
 }

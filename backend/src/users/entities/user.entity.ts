@@ -4,9 +4,11 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 
 import { Role } from '../enum/role.enum';
+import { Course } from 'src/courses/entities/course.entity';
 
 @Entity()
 export class User {
@@ -47,4 +49,7 @@ export class User {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
+
+    @OneToMany(() => Course, (course) => course.teacher)
+    courses!: Course[];
 }

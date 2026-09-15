@@ -12,6 +12,8 @@ import { MailsModule } from './mails/mails.module';
 import { OTP } from './otps/entities/otp.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UploadsModule } from './uploads/uploads.module';
+import { CoursesModule } from './courses/courses.module';
+import { Course } from './courses/entities/course.entity';
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { UploadsModule } from './uploads/uploads.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, OTP],
+      entities: [User, OTP, Course],
       synchronize: true,
     }),
     AuthModule,
@@ -36,6 +38,7 @@ import { UploadsModule } from './uploads/uploads.module';
     OtpsModule,
     MailsModule,
     UploadsModule,
+    CoursesModule,
   ],
 
   controllers: [AppController],
